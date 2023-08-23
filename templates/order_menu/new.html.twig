@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New OrderMenu{% endblock %}
+
+{% block body %}
+    <h1>Create new OrderMenu</h1>
+
+    {{ include('order_menu/_form.html.twig') }}
+
+    <a href="{{ path('app_order_menu_index') }}">back to list</a>
+{% endblock %}

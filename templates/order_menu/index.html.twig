@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}OrderMenu index{% endblock %}
+
+{% block body %}
+    <h1>OrderMenu index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order_menu in order_menus %}
+            <tr>
+                <td>
+                    <a href="{{ path('app_order_menu_show', {'menu': order_menu.menu}) }}">show</a>
+                    <a href="{{ path('app_order_menu_edit', {'menu': order_menu.menu}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="1">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_order_menu_new') }}">Create new</a>
+{% endblock %}
