@@ -36,7 +36,7 @@ class Drink
     #[ORM\Column(name: 'id', type: 'integer', nullable: false)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[Groups(['drink:list', 'drink:item'])]
+    #[Groups(['drink:list', 'drink:item', 'orderMenu:list', 'orderMenu:item'])]
     private $id;
 
     /**

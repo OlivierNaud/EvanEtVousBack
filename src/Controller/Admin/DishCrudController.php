@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Dish;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
+
 class DishCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

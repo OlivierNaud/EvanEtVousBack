@@ -1,33 +1,40 @@
 <?php
-
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
-use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
+use Doctrine\DBAL\Types\Types;
 use ApiPlatform\Metadata\Delete;
+use Doctrine\ORM\Mapping as ORM;
+use App\Controller\DishController;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * Dish
  *
  */
+#[Vich\Uploadable]
 #[ORM\Table(name: 'dish')]
 #[ORM\Entity]
 #[ApiResource(
+    normalizationContext: ['groups' => ['dish:read']], 
+    denormalizationContext: ['groups' => ['dish:write']], 
+    paginationEnabled: false,
     operations: [
         new Get(normalizationContext: ['groups' => 'dish:item']),
         new GetCollection(normalizationContext: ['groups' => 'dish:list']),
-        new Post(),
+        new Post(inputFormats: ['multipart' => ['multipart/form-data']]),
         new Put(),
         new Delete(),
-        
     ],
-    paginationEnabled: false,)]
+    
+)]
 class Dish
 {
     /**
@@ -37,7 +44,7 @@ class Dish
     #[ORM\Column(name: 'id', type: 'integer', nullable: false)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[Groups(['dish:list', 'dish:item', 'van:list', 'van:item'])]
+    #[Groups(['dish:list', 'dish:item', 'van:list', 'van:item', 'orderMenu:list', 'orderMenu:item'])]
     private $id;
 
     /**
@@ -45,7 +52,7 @@ class Dish
      *
      */
     #[ORM\Column(name: 'name', type: 'string', length: 45, nullable: false)]
-    #[Groups(['dish:list', 'dish:item', 'van:list', 'van:item'])]
+    #[Groups(['dish:list', 'dish:item', 'van:list', 'van:item', 'dish:write'])]
     private $name;
 
     /**
@@ -53,15 +60,23 @@ class Dish
      *
      */
     #[ORM\Column(name: 'description', type: 'text', length: 65535, nullable: false)]
-    #[Groups(['dish:list', 'dish:item'])]
+    #[Groups(['dish:list', 'dish:item', 'van:list', 'van:item', 'dish:write'])]
     private $description;
+
+    #[ApiProperty(types: ['https://schema.org/contentUrl'])]
+    #[Groups(['dish:read'])]
+    public ?string $contentUrl = null;
+
+    #[Vich\UploadableField(mapping: 'dish', fileNameProperty: 'img')]
+    #[Groups(['dish:write'])]
+    public ?File $file = null;
 
     /**
      * @var string
      *
      */
-    #[ORM\Column(name: 'img', type: 'string', length: 255, nullable: false)]
-    #[Groups(['dish:list', 'dish:item'])]
+    #[ORM\Column(name: 'img', type: 'string', length: 255, nullable: true)]
+    #[Groups(['dish:list', 'dish:item', 'van:list', 'van:item'])]
     private $img;
 
     /**
@@ -69,7 +84,7 @@ class Dish
      *
      */
     #[ORM\Column(name: 'ingredients', type: 'string', length: 255, nullable: false)]
-    #[Groups(['dish:list', 'dish:item'])]
+    #[Groups(['dish:list', 'dish:item', 'van:list', 'van:item', 'dish:write'])]
     private $ingredients;
 
     /**
@@ -77,7 +92,7 @@ class Dish
      *
      */
     #[ORM\Column(name: 'price', type: 'decimal', precision: 10, scale: 2, nullable: false)]
-    #[Groups(['dish:list', 'dish:item'])]
+    #[Groups(['dish:list', 'dish:item', 'van:list', 'van:item', 'dish:write'])]
     private $price;
 
     

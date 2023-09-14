@@ -38,7 +38,7 @@ class Van
     #[ORM\Column(name: 'id', type: 'integer', nullable: false)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[Groups(['van:list', 'van:item', 'dish:list', 'dish:item', 'answer:list', 'answer:item'])]
+    #[Groups(['van:list', 'van:item', 'dish:list', 'dish:item', 'answer:list', 'answer:item', 'order:list', 'order:item', 'user:list', 'user:item'])]
     private $id;
 
     /**
@@ -54,7 +54,7 @@ class Van
      *
      */
     #[ORM\Column(name: 'description', type: 'text', length: 65535, nullable: false)]
-    #[Groups(['van:list', 'van:item'])]
+    #[Groups(['van:list', 'van:item', 'dish:list', 'dish:item'])]
     private $description;
 
     /**
@@ -62,7 +62,7 @@ class Van
      *
      */
     #[ORM\Column(name: 'img', type: 'string', length: 255, nullable: false)]
-    #[Groups(['van:list', 'van:item'])]
+    #[Groups(['van:list', 'van:item', 'dish:list', 'dish:item'])]
     private $img;
 
     /**
@@ -70,7 +70,7 @@ class Van
      *
      */
     #[ORM\Column(name: 'phone', type: 'string', length: 10, nullable: false, options: ['fixed' => true])]
-    #[Groups(['van:list', 'van:item'])]
+    #[Groups(['van:list', 'van:item', 'dish:list', 'dish:item'])]
     private $phone;
 
     /**

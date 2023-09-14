@@ -1,6 +1,8 @@
 <?php
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -28,7 +30,10 @@ use ApiPlatform\Metadata\GetCollection;
         new Delete(),
         
     ],
-    paginationEnabled: false,)]
+    paginationEnabled: false,
+    normalizationContext: ['groups' => ['order:get']],
+    denormalizationContext: ['groups' => ['order:post']],
+    )]
 class Order
 {
     /**
@@ -38,7 +43,7 @@ class Order
     #[ORM\Column(name: 'id', type: 'integer', nullable: false)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[Groups(['order:list', 'order:item'])]
+    #[Groups(['order:list', 'order:item', 'van:list', 'van:item', 'orderMenu:list', 'orderMenu:item', 'order:post'])]
     private $id;
 
     /**
@@ -46,15 +51,15 @@ class Order
      *
      */
     #[ORM\Column(name: 'price', type: 'decimal', precision: 10, scale: 2, nullable: false)]
-    #[Groups(['order:list', 'order:item'])]
+    #[Groups(['order:list', 'order:item', 'van:list', 'van:item', 'order:post'])]
     private $price;
 
     /**
      * @var \DateTime
      *
      */
-    #[ORM\Column(name: 'created_at', type: 'datetime', nullable: false)]
-    #[Groups(['order:list', 'order:item'])]
+    #[ORM\Column(name: 'created_at', type: 'datetime', nullable: true)]
+    #[Groups(['order:list', 'order:item', 'order:post'])]
     private $createdAt;
 
     /**
@@ -63,7 +68,7 @@ class Order
      */
     #[ORM\JoinColumn(name: 'van_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Van')]
-    #[Groups(['order:list', 'order:item'])]
+    #[Groups(['order:list', 'order:item', 'order:post'])]
     private $van;
 
     /**
@@ -72,8 +77,23 @@ class Order
      */
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'User')]
-    #[Groups(['order:list', 'order:item'])]
+    #[Groups(['order:list', 'order:item', 'order:post'])]
     private $user;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     */
+    #[ORM\JoinColumn( name: 'orderMenu_id', referencedColumnName: 'id')]
+    #[ORM\OneToMany(cascade: ['persist'], mappedBy: 'order', targetEntity: OrderMenu::class)]
+    #[Groups(['order:item', 'order:post'])]
+    private Collection $orderMenu;
+
+    public function __construct()
+    {
+        $this->orderMenu = new ArrayCollection();
+        $this->createdAt = new \DateTime();
+    }
 
     public function getId(): ?int
     {
@@ -112,6 +132,37 @@ class Order
     public function setVan(?Van $van): self
     {
         $this->van = $van;
+
+        return $this;
+    }
+
+
+    /**
+     * @return Collection<int, OrderMenu>
+     */
+    public function getOrderMenu(): Collection
+    {
+        return $this->orderMenu;
+    }
+
+    public function addOrderMenu(OrderMenu $orderMenu): self
+    {
+        if (!$this->orderMenu->contains($orderMenu)) {
+            $this->orderMenu->add($orderMenu);
+            $orderMenu->setOrder($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderMenu(OrderMenu $orderMenu): self
+    {
+        if ($this->orderMenu->removeElement($orderMenu)) {
+            // set the owning side to null (unless already changed)
+            if ($orderMenu->getOrder() === $this) {
+                $orderMenu->setOrder(null);
+            }
+        }
 
         return $this;
     }

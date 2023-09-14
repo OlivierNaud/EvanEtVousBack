@@ -43,7 +43,7 @@ class OrderMenu
     #[ORM\Column(name: 'id', type: 'integer', nullable: false)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[Groups(['orderMenu:list', 'orderMenu:item'])]
+    #[Groups(['orderMenu:list', 'orderMenu:item', 'order:list', 'order:item', 'drink:list', 'drink:item', 'dish:list', 'dish:item', 'menu:list', 'menu:item', 'dessert:list', 'dessert:item'])]
     private $id;
 
     /**
@@ -52,7 +52,7 @@ class OrderMenu
      */
     #[ORM\JoinColumn(name: 'dessert_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Dessert')]
-    #[Groups(['orderMenu:list', 'orderMenu:item'])]
+    #[Groups(['orderMenu:list', 'orderMenu:item', 'order:post'])]
     private $dessert;
 
     /**
@@ -61,7 +61,7 @@ class OrderMenu
      */
     #[ORM\JoinColumn(name: 'menu_id', referencedColumnName: 'id')]
     #[ORM\OneToOne(targetEntity: 'Menu')]
-    #[Groups(['orderMenu:list', 'orderMenu:item'])]
+    #[Groups(['orderMenu:list', 'orderMenu:item', 'order:post'])]
     private $menu;
 
     /**
@@ -70,7 +70,7 @@ class OrderMenu
      */
     #[ORM\JoinColumn(name: 'dish_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Dish')]
-    #[Groups(['orderMenu:list', 'orderMenu:item'])]
+    #[Groups(['orderMenu:list', 'orderMenu:item', 'order:post'])]
     private $dish;
 
     /**
@@ -88,7 +88,7 @@ class OrderMenu
      */
     #[ORM\JoinColumn(name: 'drink_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Drink')]
-    #[Groups(['orderMenu:list', 'orderMenu:item'])]
+    #[Groups(['orderMenu:list', 'orderMenu:item', 'order:post'])]
     private $drink;
 
     public function getId(): ?int
